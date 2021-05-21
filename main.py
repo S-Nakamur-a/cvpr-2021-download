@@ -62,7 +62,7 @@ def main() -> None:
                             category_name=category_name,
                             title=paper_title,
                             arxiv_url=paper_url,
-                            pdf_url=paper_url.replace("abs", "pdf") + ".pdf" if paper_url != "" else "",
+                            pdf_url=paper_url.replace("abs", "pdf") + ".pdf" if paper_url.startswith("http") else "",
                             code_url=code_url,
                         )
                     )
