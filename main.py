@@ -57,12 +57,15 @@ def main() -> None:
                     ]
             elif markdown_line.startswith(paper_title_prefix):
                 if paper_title is not None:
+                    pdf_url = paper_url if paper_url.startswith("http") else ""
+                    if "arxiv" in pdf_url:
+                        pdf_url = pdf_url.replace("abs", "pdf") + ".pdf"
                     paper_info_list.append(
                         PaperInfo(
                             category_name=category_name,
                             title=paper_title,
                             arxiv_url=paper_url,
-                            pdf_url=paper_url.replace("abs", "pdf") + ".pdf" if paper_url.startswith("http") else "",
+                            pdf_url=pdf_url,
                             code_url=code_url,
                         )
                     )
@@ -82,6 +85,7 @@ def main() -> None:
         dict_writer.writerows(dump_paper_info_list)
 
     # 論文ダウンロード
+    errors = []
     for i, paper_info in enumerate(paper_info_list):
         directory = DUMP_DIRECTORY / secure_filename(paper_info.category_name)
         file_path = directory / (secure_filename(paper_info.title) + ".pdf")
@@ -95,18 +99,31 @@ def main() -> None:
             )
         else:
             if paper_info.pdf_url == "":
-                print(f"{i + 1}/{len(paper_info_list)}: {paper_info.title}'s url is unknown. skip")
+                print(
+                    f"{i + 1}/{len(paper_info_list)}: {paper_info.title}'s url is unknown. skip"
+                )
                 continue
-            print(f"{i+1}/{len(paper_info_list)}: downloading from {paper_info.pdf_url} into {file_path}")
-            r = requests.get(paper_info.pdf_url)
-            if r.status_code == 200:
-                with file_path.open("wb") as f:
-                    f.write(r.content)
-                    f.close()
-                    print("downloaded")
-                    time.sleep(1)
-            else:
-                print("\t download failed")
+            print(
+                f"{i+1}/{len(paper_info_list)}: downloading from {paper_info.pdf_url} into {file_path}"
+            )
+            try:
+                r = requests.get(paper_info.pdf_url)
+                if r.status_code == 200:
+                    with file_path.open("wb") as f:
+                        f.write(r.content)
+                        f.close()
+                        print("downloaded")
+                        time.sleep(1)
+                else:
+                    print("\t download failed")
+            except requests.exceptions.SSLError as e:
+                print(f"SSL Error: {paper_info.pdf_url}")
+                errors.append(paper_info)
+            except Exception as e:
+                errors.append(paper_info)
+
+    print("Error Lists")
+    print(errors)
 
 
 if __name__ == "__main__":
