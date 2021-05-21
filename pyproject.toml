@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "cvpr-2021-downloader"
+version = "0.1.0"
+description = ""
+authors = ["Nkriskeeic <25317025+S-Nakamur-a@users.noreply.github.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+requests = "^2.25.1"
+Werkzeug = "^2.0.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+pysen = {extras = ["lint"], version = "^0.9.1"}
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pysen]
+version = "0.9"
+
+[tool.pysen.lint]
+enable_black = true
+enable_flake8 = true
+enable_isort = true
+enable_mypy = true
+mypy_preset = "strict"
+line_length = 88
+py_version = "py38"
+mypy_ignore_packages = ["pysen.generated.*"]
+[[tool.pysen.lint.mypy_targets]]
+  paths = ["."]
+
+[tool.pysen.lint.source]
+  includes = ["."]
+  excludes = [".venv"]
