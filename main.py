@@ -108,6 +108,7 @@ def main() -> None:
             )
             try:
                 r = requests.get(paper_info.pdf_url)
+                assert r.headers["content-type"] == "application/pdf"
                 if r.status_code == 200:
                     with file_path.open("wb") as f:
                         f.write(r.content)
