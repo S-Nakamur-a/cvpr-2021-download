@@ -114,7 +114,7 @@ def main() -> None:
                         f.write(r.content)
                         f.close()
                         print("downloaded")
-                        time.sleep(1)
+                        time.sleep(5)
                 else:
                     print("\t download failed")
             except requests.exceptions.SSLError as e:
