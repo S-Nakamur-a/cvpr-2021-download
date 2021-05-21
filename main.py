@@ -21,6 +21,7 @@ class PaperInfo:
 
 
 def main() -> None:
+    # 有志によるまとめのmarkdownを取得してきて頑張って論文情報をパースします
     cvpr_papers_url = "https://raw.githubusercontent.com/amusi/CVPR2021-Papers-with-Code/master/README.md"
 
     r = requests.get(cvpr_papers_url)
@@ -42,6 +43,7 @@ def main() -> None:
 
     paper_info_list: List[PaperInfo] = []
 
+    # かっこよくmarkdown parser的なのを使いたかったけどいいのがなかったので、各行ごとに見ていってなんとかパースしている
     for markdown_line in markdown_lines:
         if markdown_line.startswith(start_category_prefix):
             is_start_category = True
@@ -72,12 +74,14 @@ def main() -> None:
             elif markdown_line.startswith(code_url_prefix):
                 code_url = markdown_line[len(code_url_prefix) :]
 
+    # 毎回上書き保存しちゃう
     dump_paper_info_list = [dataclasses.asdict(d) for d in paper_info_list]
     with DUMP_CSV_PATH.open("w") as f:
         dict_writer = csv.DictWriter(f, list(dump_paper_info_list[0].keys()))
         dict_writer.writeheader()
         dict_writer.writerows(dump_paper_info_list)
 
+    # 論文ダウンロード
     for i, paper_info in enumerate(paper_info_list):
         directory = DUMP_DIRECTORY / secure_filename(paper_info.category_name)
         file_path = directory / (secure_filename(paper_info.title) + ".pdf")
