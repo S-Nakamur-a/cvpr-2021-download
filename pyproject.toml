@@ -2,7 +2,7 @@
 name = "cvpr-2021-downloader"
 version = "0.1.0"
 description = ""
-authors = ["Nkriskeeic <25317025+S-Nakamur-a@users.noreply.github.com>"]
+authors = ["S-Nakamur-a <25317025+S-Nakamur-a@users.noreply.github.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
